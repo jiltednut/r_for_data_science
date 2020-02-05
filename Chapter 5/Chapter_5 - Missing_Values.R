@@ -51,21 +51,31 @@ flights %>%
 # What happens to missing values in a bar chart? 
 # Why is there a difference?
 
+?geom_bar # default statistical function - count
+?geom_histogram # default statistical function - bin
+
 # Plot a histrogram with NAs
 ggplot(data = diamonds2, mapping = aes(x = y)) +
   geom_histogram(binwidth = 0.01)
 
 # Plot a bar chart with NAs
 diamonds2 %>% 
-  mutate(cutb = ifelse(is.na(y), NA, cut)) %>% 
+  mutate(cutb = ifelse(is.na(y), NA_character_, as.character(cut))) %>% 
   ggplot() +
   geom_bar(mapping = aes(x = cutb))
 
-# The difference is bar chart counts the number of unique values
-# Histogram bins the values so mising values get rolled up
+# The difference is bar chart counts the number of unique categorical values
+# Bar chart adds a separate bar, treating NA as a distinct category.
+# Histogram bins the numeric values so missing values get rolled up.
 
-?geom_bar
-?geom_histogram
+
+## Question 2
+
+# What does na.rm = TRUE do in mean() and sum() ?
+
+# na.rm removes NA from the vector being processed before calculating.
+
+
 
 
 
