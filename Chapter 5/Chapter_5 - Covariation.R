@@ -4,6 +4,7 @@ library(nycflights13)
 ### Exploratory Data Analysis
 
 ## Covariation
+## A categorical and continuous variable
 
 ## Examples
 
@@ -162,10 +163,123 @@ ggplot(data = diamonds) +
 # One approach to remedy this problem is the letter value plot. 
 # Install the lvplot package, and try using geom_lv() to display the distribution of 
 # price versus cut. What do you learn? How do you interpret the plots?
-install.packages("lvplot")
+# install.packages("lvplot")
+library("lvplot")
+ggplot(data = diamonds) +
+  geom_lv(mapping = aes(x = cut, y = price))
+
+ggplot(data = diamonds) +
+  geom_violin(mapping = aes(x = cut, y = price))
+
+# Question 5
+
+# Compare and contrast geom_violin() with a faceted geom_histogram(), 
+# or a colored geom_freqpoly() . 
+# What are the pros and cons of each method?
+
+# For each plot we can consider cut vs price from the diamonds dataset.
+# Coloured Freqpoly
+ggplot(data = diamonds, mapping = aes(x = price, y = ..density..)) +
+  geom_freqpoly(mapping = aes(color = cut))
+
+# Faceted histogram
+ggplot(data = diamonds, mapping = aes(x = price)) +
+  geom_histogram() +
+  facet_wrap(~cut, ncol = 1, scales = "free_y")
+
+# Violin plot
+ggplot(data = diamonds, mapping = aes(x = cut, y = price)) +
+  geom_violin() +
+  coord_flip()
+
+# The geom_freqpoly() is better for look-up: meaning that given a price, 
+# it is easy to tell which cut has the highest density. However, the overlapping lines 
+# makes it difficult to distinguish how the overall distributions relate to each other. 
+# The geom_violin() and faceted geom_histogram() have similar strengths and weaknesses. 
+# It is easy to visually distinguish differences in the overall shape of the distributions 
+# (skewness, central values, variance, etc). However, since we can’t easily compare the 
+# vertical values of the distribution, it is difficult to look up which category has the 
+# highest density for a given price. 
+# All of these methods depend on tuning parameters to determine the level of smoothness of 
+# the distribution.
+
+## Colored freqpoly:
+# Strength:
+#   Easy to lookup i.e. compare densities of distribution.
+# Weakness:
+#   Overlapping lines can make it difficult to see how the different distributions relate
+#   to each other. This is compounded as the number of factor levels increases.
+
+## Faceted histogram:
+# Strength:
+#   Easy to compare the characteristics of each distribution i.e. skewness, central tendency,
+#   variance etc.)
+# Weakness:
+#   It is difficult to compare the density at a certain point as we can't, easily, compare 
+#   vertical values.
+
+# Question 6
+# If you have a small dataset, it’s sometimes useful to use geom_jitter() to see the 
+# relationship between a continuous and categorical variable. 
+# The ggbeeswarm package provides a number of methods similar to geom_jitter() . 
+# List them and briefly describe what each one does.
+
+# install.packages("ggbeeswarm")
+library(ggbeeswarm)
+
+# There are two methods:
+# 1 - geom_quasirandom(): produces plots that are a mix of jitter and violin plots. 
+# 2 - geom_beeswarm(): produces a plot similar to a violin plot, but by offsetting the points.
+
+# As jitter, generally, works best with a smaller dataset, we work with the mpg data rather
+# than diamonds or flights as previously.
+# Plotting highway mpg vs class
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(
+    x = reorder(class, hwy, FUN = median),
+    y = hwy
+  )) +
+  labs(x = "class", title = "Quasirandom")
+
+? geom_quasirandom
+# From the documentation of quasirandom, we can see there are 4 methods
+# to distribute the points: 
+# quasirandom, pseudorandom, smiley and frowney
+# quasirandom is the default method.
+
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(
+    x = reorder(class, hwy, FUN = median),
+    y = hwy
+  ),
+  method = "pseudorandom") +
+  labs(x = "class", title = "Pseudorandom")
+
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(
+    x = reorder(class, hwy, FUN = median),
+    y = hwy
+  ),
+  method = "smiley") +
+  labs(x = "class", title = "Smiley")
+
+ggplot(data = mpg) +
+  geom_quasirandom(mapping = aes(
+    x = reorder(class, hwy, FUN = median),
+    y = hwy
+  ),
+  method = "frowney") +
+  labs(x = "class", title = "Frowney")
+
+# beeswarm plot
+ggplot(data = mpg) +
+  geom_beeswarm(mapping = aes(
+    x = reorder(class, hwy, FUN = median), 
+    y = hwy)
+    ) +
+  labs(x = "class", title = "Beeswarm")
 
 
 
 
 
-             
